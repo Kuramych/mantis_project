@@ -46,8 +46,13 @@ class ProjectHelper:
         self.fill_form_project(project)
         self.submit_project()
 
-    def select_project_by_index(self):
+    def get_project_len_list(self):
         wd = self.app.wd
+        self.open_project_page()
+        rows1 = wd.find_elements(By.CSS_SELECTOR, "tr.row-1")
+        rows2 = wd.find_elements(By.CSS_SELECTOR, "tr.row-2")
+        rows1.extend(rows2)
+        return len(rows1)
 
     def get_project_list(self):
         wd = self.app.wd
@@ -55,7 +60,17 @@ class ProjectHelper:
         rows1 = wd.find_elements(By.CSS_SELECTOR, "tr.row-1")
         rows2 = wd.find_elements(By.CSS_SELECTOR, "tr.row-2")
         rows1.extend(rows2)
-        return len(rows1)
+        project_list = []
+        for row in rows1:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            name = cells[0].text
+            status = cells[1].text
+            #view_state = cells[3].text
+            #description = cells[4].text
+            #project_list.append(Project(name=name, status=status, view_state=view_state,
+            #                            description=description))
+            project_list.append(Project(name=name, status=status))
+        return project_list
 
     def delete_project(self):
         wd = self.app.wd
